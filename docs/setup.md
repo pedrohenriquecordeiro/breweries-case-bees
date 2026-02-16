@@ -49,7 +49,6 @@ Write a **temporary** `.env` file in the `infra` directory with the following co
 ```bash
 PROJECT_ID=<your-gcp-project-id>
 TF_VAR_project_id=<your-gcp-project-id>
-SMTP_PASSWORD=<your-smtp-password>
 ```
 
 Load the environment variables:
