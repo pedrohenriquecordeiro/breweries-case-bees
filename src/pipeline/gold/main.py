@@ -10,8 +10,6 @@ from pyspark.sql.utils import AnalysisException
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 if __name__ == "__main__":
-    
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/app/.secrets/gke-service-account.json"
 
     spark = (
         SparkSession.builder
