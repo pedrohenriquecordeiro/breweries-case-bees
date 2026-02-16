@@ -1,0 +1,110 @@
+# version : 1.16.0
+
+executor: "KubernetesExecutor"
+allowPodLaunching: true
+
+serviceAccount:
+  create: false
+  name: airflow-service-account
+
+
+securityContext:
+  fsGroup: 0
+  runAsUser: 50000
+  runAsGroup: 0
+
+airflowPodAnnotations:
+  gke-gcsfuse/volumes: "true"
+  gke-gcsfuse/ephemeral-storage-limit: 8Gi # must to be less than the size of the PVC
+
+images:
+  gitSync:
+    repository: registry.k8s.io/git-sync/git-sync
+    tag: v4.3.0
+    pullPolicy: IfNotPresent
+
+#config:
+#  smtp:
+#    smtp_host: "smtp.gmail.com"
+#    smtp_starttls: "True"
+#    smtp_ssl: "False"
+#    smtp_port: "587"
+#    smtp_mail_from: "pedrohcordeiroj@gmail.com"
+#    smtp_user: "pedrohcordeiroj@gmail.com"
+#    # smtp_password set via Helm --set
+
+postgresql:
+  enabled: false
+
+data:
+  metadataConnection:
+    protocol: postgresql
+    host: postgresql
+    port: 5432
+    db: airflow
+    user: admin
+
+webserver:
+  service:
+    type: ClusterIP
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+  defaultUser:
+    enabled: true
+    role: Admin
+    username: bees
+    email: bees@default.com
+    firstName: bees
+    lastName: user
+    password: bees
+
+ingress:
+  web:
+    enabled: false
+
+scheduler:
+  logGroomerSidecar:
+    enabled: true
+    retentionDays: 3
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+triggerer:
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+dagProcessor:
+  enabled: true
+  replicas: 1
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+workers:
+  replicas: 1
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+statsd:
+  enabled: false
+
+cleanup:
+  enabled: true
+  schedule: "0 0 * * *"  # Daily at midnight
+  serviceAccount:
+    create: false
+    name: airflow-service-account
+
+dags:
+  persistence:
+    enabled: true
+    existingClaim: pvc-gcs-fuse-dags
+
+logs:
+  persistence:
+    enabled: true
+    existingClaim: pvc-gcs-fuse-logs

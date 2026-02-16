@@ -1,0 +1,9 @@
+# ---------- Analytics stack (wheels available) ----------
+pandas==2.3.1                   # Data analysis library
+pyarrow==17.0.0                 # Apache Arrow for columnar data
+deltalake==1.1.4                # Delta Lake support
+pyspark==4.0.1
+# ---------- Airflow Providers (compatible with Airflow 2.10.x) ----------
+apache-airflow-providers-apache-spark==5.3.2
+apache-airflow-providers-cncf-kubernetes==10.8.2
+apache-airflow-providers-google==18.0.0

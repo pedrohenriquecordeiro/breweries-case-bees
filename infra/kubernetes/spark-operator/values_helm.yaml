@@ -1,0 +1,21 @@
+nameOverride: ""
+
+image:
+  registry: docker.io
+  repository: kubeflow/spark-operator
+  tag: "2.1.0"
+  pullPolicy: IfNotPresent
+
+spark:
+  jobNamespaces:
+  - spark
+
+controller:
+  replicas: 1
+
+webhook:
+  replicas: 1
+
+prometheus:
+  metrics:
+    enable: false

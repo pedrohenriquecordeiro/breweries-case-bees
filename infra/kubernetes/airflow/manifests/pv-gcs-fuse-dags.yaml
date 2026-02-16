@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-gcs-fuse-dags
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 10Gi
+  storageClassName: should-not-be-empty # StorageClassName must not be empty for static provisioning
+  mountOptions:
+    - implicit-dirs                         # Allow implicit directory handling in GCS
+    - file-cache:max-size-mb:-1             # Unlimited file cache size
+    - file-cache:enable-parallel-downloads:true   # Enable parallel downloads
+    - file-cache:parallel-downloads-per-file:4    # Max parallel downloads per file
+    - file-cache:max-parallel-downloads:-1        # Unlimited total parallel downloads
+    - file-cache:download-chunk-size-mb:3         # Download chunk size set to 3MB
+    - uid=50000                            # Set user ID for file ownership
+    - gid=0                                # Set group ID for file ownership
+    - dir-mode=0770                        # Directory permissions: owner and group can read, write, execute; others have no access
+    - file-mode=0660                       # File permissions: owner and group can read and write; others have no access
+  csi:
+    driver: gcsfuse.csi.storage.gke.io
+    volumeHandle: bees-airflow-dags # GCS bucket
+    volumeAttributes:
+      gcsfuseLoggingSeverity: warning

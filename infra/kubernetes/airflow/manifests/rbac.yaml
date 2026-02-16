@@ -1,0 +1,56 @@
+# ServiceAccount for Airflow pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: airflow-service-account
+  namespace: airflow
+
+---
+
+# ClusterRoleBinding granting cluster-admin to Airflow and default ServiceAccounts in 'airflow' namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster_role_binding_airflow
+  namespace: airflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: airflow-service-account
+    namespace: airflow
+  - kind: ServiceAccount
+    name: default
+    namespace: airflow
+
+---
+
+# ClusterRole with permissions for pods and persistent volumes
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: airflow-clusterrole
+  namespace: airflow
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["get", "list", "create", "update", "delete", "watch"]
+
+---
+
+# ClusterRoleBinding to bind the above ClusterRole to the Airflow ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: airflow-clusterrolebinding
+  namespace: airflow
+subjects:
+  - kind: ServiceAccount
+    name: airflow-service-account
+    namespace: airflow
+roleRef:
+  kind: ClusterRole
+  name: airflow-clusterrole
+  apiGroup: rbac.authorization.k8s.io
